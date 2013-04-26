@@ -7,15 +7,6 @@ display_error() {
 	exit 1
 }
 
-update_profile() {
-	[ -f $1 ] || return 1
-
-	cat $1 | grep "$source_line" > /dev/null 2>&1
-	if [ $? -ne 0 ]; then
-		echo "$source_line" >> $1
-	fi
-}
-
 check_existing_go() {
 	if [ "$GOROOT" == "" ]; then
 		echo "No existing Go versions detected"
@@ -74,12 +65,6 @@ if [ "$GVM_NAME" == ".gvm" ]; then
 else
 	source_line="[[ -s \"${GVM_DEST}/gvm/scripts/gvm\" ]] && source \"${GVM_DEST}/gvm/scripts/gvm\""
 	source_file="${GVM_DEST}/gvm/scripts/gvm"
-fi
-
-if [ "`uname`" == "Linux" ]; then
-	update_profile $HOME/.bashrc || update_profile $HOME/.bash_profile
-elif [ "`uname`" == "Darwin" ]; then
-	update_profile $HOME/.profile || update_profile $HOME/.bash_profile
 fi
 
 if [ "$?" != "0" ]; then
