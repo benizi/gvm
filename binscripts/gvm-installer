@@ -7,14 +7,20 @@ display_error() {
 	exit 1
 }
 
-update_profile() {
-	[ -f $1 ] || return 1
+if [ -n "$UPDATE_PROFILE" ]; then
+	update_profile() {
+		[ -f $1 ] || return 1
 
-	cat $1 | grep "$source_line" > /dev/null 2>&1
-	if [ $? -ne 0 ]; then
-		echo "$source_line" >> $1
-	fi
-}
+		cat $1 | grep "$source_line" > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			echo "$source_line" >> $1
+		fi
+	}
+else
+	update_profile() {
+		: # do nothing
+	}
+fi
 
 check_existing_go() {
 	if [ "$GOROOT" == "" ]; then
