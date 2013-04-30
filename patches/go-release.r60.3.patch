@@ -1,0 +1,57 @@
+diff -r c1702f36df03 src/cmd/cc/funct.c
+--- a/src/cmd/cc/funct.c	Tue Oct 18 10:55:12 2011 +1100
++++ b/src/cmd/cc/funct.c	Mon Apr 29 23:56:33 2013 -0400
+@@ -269,7 +269,7 @@
+ 		goto bad;
+ 
+ 	f = alloc(sizeof(*f));
+-	for(o=0; o<sizeof(f->sym); o++)
++	for(o=0; o<nelem(f->sym); o++)
+ 		f->sym[o] = S;
+ 
+ 	t->funct = f;
+diff -r c1702f36df03 src/cmd/gc/bisonerrors
+--- a/src/cmd/gc/bisonerrors	Tue Oct 18 10:55:12 2011 +1100
++++ b/src/cmd/gc/bisonerrors	Mon Apr 29 23:56:33 2013 -0400
+@@ -27,7 +27,7 @@
+ # In Grammar section of y.output,
+ # record lhs and length of rhs for each rule.
+ bison && /^Grammar/ { grammar = 1 }
+-bison && /^(Terminals|state 0)/ { grammar = 0 }
++bison && /^(Terminals,|State 0)/ { grammar = 0 }
+ grammar && NF>0 {
+ 	if($2 != "|") {
+ 		r = $2
+@@ -41,9 +41,9 @@
+ }
+ 
+ # In state dumps, record shift/reduce actions.
+-bison && /^state 0/ { grammar = 0; states = 1 }
++bison && /^State 0/ { grammar = 0; states = 1 }
+ 
+-states && /^state / { state = $2 }
++states && /^State / { state = $2 }
+ states { statetext[state] = statetext[state] $0 "\n" }
+ 
+ states && / shift, and go to state/ {
+diff -r c1702f36df03 src/libmach/executable.c
+--- a/src/libmach/executable.c	Tue Oct 18 10:55:12 2011 +1100
++++ b/src/libmach/executable.c	Mon Apr 29 23:56:33 2013 -0400
+@@ -784,7 +784,7 @@
+ 		buf = malloc(sh[ep->shstrndx].size);
+ 		if (buf == 0)
+ 			goto done;
+-		memset(buf, 0, sizeof buf);
++		memset(buf, 0, sh[ep->shstrndx].size);
+ 		seek(fd, sh[ep->shstrndx].offset, 0);
+ 		i = read(fd, buf, sh[ep->shstrndx].size);
+ 		USED(i);	// shut up ubuntu gcc
+@@ -962,7 +962,7 @@
+ 		buf = malloc(sh[ep->shstrndx].size);
+ 		if (buf == 0)
+ 			goto done;
+-		memset(buf, 0, sizeof buf);
++		memset(buf, 0, sh[ep->shstrndx].size);
+ 		seek(fd, sh[ep->shstrndx].offset, 0);
+ 		i = read(fd, buf, sh[ep->shstrndx].size);
+ 		USED(i);	// shut up ubuntu gcc
