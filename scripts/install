@@ -71,6 +71,17 @@ copy_source() {
 }
 
 
+patch_go() {
+	display_message " * Patching..."
+	patch_file=$GVM_ROOT/patches/go-$GO_NAME.patch
+	if [ -f "$patch_file" ]; then
+		cd $GO_INSTALL_ROOT && patch -p1 < "$patch_file" ||
+			(rm -rf $GO_INSTALL_ROOT && display_fatal "Failed to patch")
+	else
+		display_message "No patch for $GO_NAME"
+	fi
+}
+
 compile_go() {
 	display_message " * Compiling..."
 	unset GOARCH && unset GOOS && unset GOPATH && unset GOBIN && unset GOROOT &&
@@ -130,6 +141,7 @@ install_go() {
   mkdir -p "${GVM_OVERLAY_ROOT}/bin" >> "${GVM_ROOT}/logs/go-${GO_NAME}-install.log" 2>&1 ||
 		display_fatal "Couldn't create global overlay bin directory"
 	copy_source
+	patch_go
 	compile_go
 	create_enviroment
 }
